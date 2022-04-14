@@ -6,11 +6,22 @@ const GET_MOVIE = gql`
     movie(id: $id) {
       id,
       title,
+      rating,
+      language,
       medium_cover_image,
-      description_full
+      description_full,
+      isLiked @client
+    }
+    movie_suggestions(id: $id) {
+      id,
+      medium_cover_image
     }
   }
 `
+
+type sugesstion = {
+  medium_cover_image: string;
+}
 
 export default () => {
   const { id } = useParams();
@@ -19,11 +30,15 @@ export default () => {
     variables: { id }
   })
 
-  if(loading) {
-    return "loading";
-  }
+  return <>
+    <div>{loading && 'loading'}</div>
+    <span>{data?.movie?.isLiked ? "L": "U"}</span>
+    <p>{data?.movie?.title}</p>
+    <p>{data?.movie?.rating}</p>
+    <p>{data?.movie?.language}</p>
+    <p>{data?.movie?.medium_cover_image}</p>
+    <p>{data?.movie?.description_full}</p>
 
-  if(data && data.movie) {
-    return data.movie.title;
-  }
+    <p>{data?.movie_suggestions.map((sugesstion:sugesstion) => sugesstion.medium_cover_image)}</p>
+  </>
 }
